@@ -4,16 +4,6 @@ import (
 	"fmt"
 )
 
-func findInSlice(s []int, element int) bool {
-	for _, n := range s {
-		if element == n {
-			return true
-		}
-	}
-
-	return false
-}
-
 func opCode1(index int, input []int) {
 	position1 := input[index+1]
 	position2 := input[index+2]
