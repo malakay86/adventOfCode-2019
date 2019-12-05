@@ -1,87 +1,71 @@
 package main
 
-import "testing"
+import (
+	"fmt"
+	"strconv"
+)
 
-func TestHasSixDigits(t *testing.T) {
-	a := 123456
-	if !SixDigitNumber(a) {
-		t.Fail()
-	}
-}
-
-func TestHasNotSixDigits(t *testing.T) {
-	a := 12
-	if SixDigitNumber(a) {
-		t.Fail()
-	}
-}
-
-func isInRange(min, max, number int) bool {
-	if number >= min && number <= max {
-		return true
+func NumberOfDigits(num int) int {
+	if num < 10 {
+		return 1
 	} else {
-		return false
+		return 1 + NumberOfDigits(num/10)
 	}
 }
 
-func TestIsInRange(t *testing.T) {
-	a := 34
-	minRange := 33
-	maxRange := 35
-
-	if !isInRange(minRange, maxRange, a) {
-		t.Fail()
-	}
+func SixDigitNumber(num int) bool {
+	return NumberOfDigits(num) == 6
 }
 
-func TestIsNotInRange(t *testing.T) {
-	a := 32
-	minRange := 33
-	maxRange := 35
+func HasTwoRepeatedAdjacentDigits(num int64) bool {
+	numAsStr := strconv.FormatInt(num, 10)
+	result := false
+	var previousDigit rune
+	counter := 1
+	for _, digit := range numAsStr {
+		if previousDigit == digit {
+			if counter > 2 {
+				return false
+			}
 
-	if isInRange(minRange, maxRange, a) {
-		t.Fail()
+			counter++
+			result = true
+		} else {
+			counter = 1
+		}
+
+		previousDigit = digit
 	}
+
+	return result
 }
 
-func TestIsInRange_checkLimits(t *testing.T) {
-	a := 33
-	minRange := 33
-	maxRange := 35
+func DigitsNeverDecrease (num int64) bool {
+	numAsStr := strconv.FormatInt(num, 10)
+	var previousDigit int32 = -1;
 
-	if !isInRange(minRange, maxRange, a) {
-		t.Fail()
+	for _, digit := range numAsStr {
+		if previousDigit <= digit {
+			previousDigit = digit
+		} else {
+			return false
+		}
 	}
+	return true
 }
 
-func TestTwoAdjacentDigitsAreTheSame_OK(t *testing.T) {
-	var a int64 = 3445
+func main() {
+	min := 387638;
+	max := 919123;
 
-	if !HasTwoRepeatedAdjacentDigits(a) {
-		t.Fail()
+	count := 0
+	for i := min; i <= max; i++ {
+		if SixDigitNumber(i) &&
+			HasTwoRepeatedAdjacentDigits(int64(i)) &&
+			DigitsNeverDecrease(int64(i)) {
+			count++
+		}
 	}
-}
 
-func TestTwoAdjacentDigitsAreTheSame_NOT_OK(t *testing.T) {
-	var a int64 = 3456
-
-	if HasTwoRepeatedAdjacentDigits(a) {
-		t.Fail()
-	}
-}
-
-func TestTwoAdjacentDigitsAreTheSame_OK_at_beginning(t *testing.T) {
-	var a int64 = 3356
-
-	if !HasTwoRepeatedAdjacentDigits(a) {
-		t.Fail()
-	}
-}
-
-func TestTwoAdjacentDigitsAreTheSame_OK_at_end(t *testing.T) {
-	var a int64 = 3456455
-
-	if !HasTwoRepeatedAdjacentDigits(a) {
-		t.Fail()
-	}
+	fmt.Print(count)
 }
