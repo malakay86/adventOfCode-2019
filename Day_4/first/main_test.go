@@ -1,71 +1,113 @@
 package main
 
-import (
-	"fmt"
-	"strconv"
-)
+import "testing"
 
-func NumberOfDigits(num int) int {
-	if num < 10 {
-		return 1
+func TestHasSixDigits(t *testing.T) {
+	a := 123456
+	if !SixDigitNumber(a) {
+		t.Fail()
+	}
+}
+
+func TestHasNotSixDigits(t *testing.T) {
+	a := 12
+	if SixDigitNumber(a) {
+		t.Fail()
+	}
+}
+
+func isInRange(min, max, number int) bool {
+	if number >= min && number <= max {
+		return true
 	} else {
-		return 1 + NumberOfDigits(num/10)
+		return false
 	}
 }
 
-func SixDigitNumber(num int) bool {
-	return NumberOfDigits(num) == 6
+func TestIsInRange(t *testing.T) {
+	a := 34
+	minRange := 33
+	maxRange := 35
+
+	if !isInRange(minRange, maxRange, a) {
+		t.Fail()
+	}
 }
 
-func HasTwoRepeatedAdjacentDigits(num int64) bool {
-	numAsStr := strconv.FormatInt(num, 10)
-	result := false
-	var previousDigit rune
-	counter := 1
-	for _, digit := range numAsStr {
-		if previousDigit == digit {
-			if counter > 2 {
-				return false
-			}
+func TestIsNotInRange(t *testing.T) {
+	a := 32
+	minRange := 33
+	maxRange := 35
 
-			counter++
-			result = true
-		} else {
-			counter = 1
+	if isInRange(minRange, maxRange, a) {
+		t.Fail()
+	}
+}
+
+func TestIsInRange_checkLimits(t *testing.T) {
+	a := 33
+	minRange := 33
+	maxRange := 35
+
+	if !isInRange(minRange, maxRange, a) {
+		t.Fail()
+	}
+}
+
+func TestTwoAdjacentDigitsAreTheSame_OK(t *testing.T) {
+	var a int64 = 3445
+
+	if !HasTwoRepeatedAdjacentDigits(a) {
+		t.Fail()
+	}
+}
+
+func TestTwoAdjacentDigitsAreTheSame_NOT_OK(t *testing.T) {
+	var a int64 = 3456
+
+	if HasTwoRepeatedAdjacentDigits(a) {
+		t.Fail()
+	}
+}
+
+func TestTwoAdjacentDigitsAreTheSame_NOT_OK_2(t *testing.T) {
+	var a int64 = 3444456
+
+	if HasTwoRepeatedAdjacentDigits(a) {
+		t.Fail()
+	}
+}
+
+func TestTwoAdjacentDigitsAreTheSame_OK_at_beginning(t *testing.T) {
+	var a int64 = 3356
+
+	if !HasTwoRepeatedAdjacentDigits(a) {
+		t.Fail()
+	}
+}
+
+func TestTwoAdjacentDigitsAreTheSame_OK_at_end(t *testing.T) {
+	var a int64 = 3456455
+
+	if !HasTwoRepeatedAdjacentDigits(a) {
+		t.Fail()
+	}
+}
+
+func TestDigitsNeverDecrease(t *testing.T) {
+	inputOutput := []struct {
+		input int64
+		output bool
+	}{
+		{23456, true},
+		{234456, true},
+		{23256, false},
+		{34561, false},
+	}
+
+	for _, value := range inputOutput {
+		if DigitsNeverDecrease(value.input) != value.output {
+			t.Errorf("Fail TestDigitsNeverDecrease with numeric value %d\n", value.input)
 		}
-
-		previousDigit = digit
 	}
-
-	return result
-}
-
-func DigitsNeverDecrease (num int64) bool {
-	numAsStr := strconv.FormatInt(num, 10)
-	var previousDigit int32 = -1;
-
-	for _, digit := range numAsStr {
-		if previousDigit <= digit {
-			previousDigit = digit
-		} else {
-			return false
-		}
-	}
-	return true
-}
-
-func main() {
-	min := 387638;
-	max := 919123;
-
-	count := 0
-	for i := min; i <= max; i++ {
-		if SixDigitNumber(i) &&
-			HasTwoRepeatedAdjacentDigits(int64(i)) &&
-			DigitsNeverDecrease(int64(i)) {
-			count++
-		}
-	}
-
-	fmt.Print(count)
 }
