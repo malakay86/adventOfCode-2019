@@ -19,30 +19,22 @@ func SixDigitNumber(num int) bool {
 
 func HasTwoRepeatedAdjacentDigits(num int64) bool {
 	numAsStr := strconv.FormatInt(num, 10)
-	result := false
 	var previousDigit rune
-	counter := 1
+
 	for _, digit := range numAsStr {
-		if previousDigit == digit {
-			if counter > 2 {
-				return false
-			}
-
-			counter++
-			result = true
+		if previousDigit <= digit {
+			previousDigit = digit
 		} else {
-			counter = 1
+			return false
 		}
-
-		previousDigit = digit
 	}
 
-	return result
+	return true
 }
 
-func DigitsNeverDecrease (num int64) bool {
+func DigitsNeverDecrease(num int64) bool {
 	numAsStr := strconv.FormatInt(num, 10)
-	var previousDigit int32 = -1;
+	var previousDigit int32 = -1
 
 	for _, digit := range numAsStr {
 		if previousDigit <= digit {
@@ -55,8 +47,8 @@ func DigitsNeverDecrease (num int64) bool {
 }
 
 func main() {
-	min := 387638;
-	max := 919123;
+	min := 387638
+	max := 919123
 
 	count := 0
 	for i := min; i <= max; i++ {
@@ -67,5 +59,9 @@ func main() {
 		}
 	}
 
-	fmt.Print(count)
+	// Counter minus one is the valid result,
+	// as the final i++ of the previous loop adds one more
+	count--
+
+	fmt.Println(count)
 }
